@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangziwei.mapper.UserMapper">
+	<select id="getUserList" resultType="map" parameterType="map">
+		select
+		u.*,GROUP_CONCAT(t.tname) tnames from z_user u LEFT JOIN u_t ut on
+		ut.uid = u.uid
+		LEFT JOIN z_type t on ut.tid = t.tid GROUP BY u.uid
+		limit #{pageRecord},#{pageSize2}
+	</select>
+	<select id="count" resultType="int" >
+		select count(*) from z_user
+	</select>
+	<select id="selectType" resultType="com.zhangziwei.bean.Type">
+		select * from z_type
+	</select>
+	<insert id="addUser" parameterType="com.zhangziwei.bean.User" useGeneratedKeys="true" keyProperty="uid">
+		insert into z_user values(#{uid},#{uname},#{datea})
+	</insert>
+	<insert id="addType" parameterType="map">
+		insert into u_t (uid,tid) values
+		<foreach collection="tids" item="tid" separator=",">
+			(#{uid},#{tid})
+		</foreach>
+	
+	</insert>
+	<delete id="delAll" parameterType="string">
+		delete from z_user where uid in ( ${value} )
+	</delete>
+</mapper>
