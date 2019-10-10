@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangziwei.mapper.MovieMapper">
+	<select id="getMovieList" resultType="map" parameterType="map">
+		SELECT
+		m.*,GROUP_CONCAT(t.tname) tnames FROM `a_movie` m LEFT JOIN a_m am on
+		am.mid = m.mid
+		left join a_type t on am.tid = t.tid GROUP BY m.mid
+		limit #{pageRecord},#{pageSize2}
+	</select>
+	<select id="count" resultType="int">
+		select count(*) from a_movie
+	</select>
+	<select id="getTypeList" resultType="com.zhangziwei.bean.Type">
+		select * from a_type
+	</select>
+	<delete id="delMovie" parameterType="com.zhangziwei.bean.Movie" >
+		delete from a_movie where mid = #{mid}
+	</delete>
+	<delete id="delType" parameterType="map">
+		delete from a_m where mid = 
+		<foreach collection="tids" item="tid" separator=",">
+			#{tid}
+		</foreach>
+	</delete>
+	<insert id="addMovie" parameterType="com.zhangziwei.bean.Movie" useGeneratedKeys="true" keyProperty="mid">
+		insert into a_movie values(#{mid},#{mname},#{content},#{author},#{datea})
+	</insert>
+	<insert id="addType" parameterType="map">
+		insert into a_m  values
+		<foreach collection="tids" item="tid" separator=",">
+			(#{id},#{mid},#{tid})
+		</foreach>
+	</insert>
+	<select id="getMovieById" parameterType="com.zhangziwei.bean.Movie" resultType="com.zhangziwei.bean.Movie">
+		select * from a_movie where mid = #{mid}
+	</select>
+</mapper>
